@@ -1,3 +1,5 @@
 <x-layout>
-    <p class="text-fuchsia-400">Test</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <livewire:add-user-form-modal />
+    </div>
 </x-layout>
