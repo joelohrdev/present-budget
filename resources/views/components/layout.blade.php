@@ -48,5 +48,8 @@
         <footer class="max-w-5xl mx-auto px-6 py-12 border-t border-stone-200 mt-12"><div class="flex flex-col md:flex-row justify-between items-center gap-6"><div class="flex flex-col md:flex-row items-center gap-4"><p class="text-stone-400 text-xs text-center md:text-left">© {{ now()->format('Y') }} Christmas Budget</p></div><div><button class="inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed bg-transparent text-stone-500 hover:text-stone-800 hover:bg-stone-100 px-3 py-1.5 text-xs uppercase tracking-wide text-xs text-stone-400">Disconnect Database</button></div></div></footer>
     </div>
     @fluxScripts
+    @persist('toast')
+    <flux:toast />
+    @endpersist
 </body>
 </html>
