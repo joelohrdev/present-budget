@@ -34,4 +34,9 @@ final class Child extends Model
             'updated_at' => 'datetime',
         ];
     }
+
+    public function getFirstLetterAttribute(): string
+    {
+        return $this->name[0];
+    }
 }

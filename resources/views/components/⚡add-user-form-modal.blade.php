@@ -23,6 +23,8 @@ new class extends Component {
 
         $this->modal('add-user-form')->close();
 
+        $this->dispatch('child-added');
+
         Flux::toast(text: 'Child added successfully', variant: 'success');
     }
 };
