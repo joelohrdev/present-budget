@@ -26,10 +26,11 @@ new class extends Component {
 };
 ?>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div x-data="{ show: false, selectedChild: null }" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <livewire:add-user-form-modal/>
     @foreach ($this->children as $child)
         <div
+            @click="show = true; selectedChild = {{ Js::from($child) }}"
             class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden border border-stone-200 group relative">
             <div class="p-6">
                 <div class="flex justify-between items-start mb-4">
@@ -74,4 +75,28 @@ new class extends Component {
             </div>
         </div>
     @endforeach
+
+    <div x-show="show" x-cloak class="fixed inset-0 z-40 bg-stone-100 overflow-y-auto animate-fade-in m-3 rounded-xl shadow-xl">
+        <template x-if="selectedChild">
+            <div class="bg-white border-b border-stone-200 sticky top-0 z-50">
+                <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <button @click="show = ! show" class="p-2 -ml-2 rounded-full text-stone-500 hover:bg-stone-100 transition-colors hover:cursor-pointer">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                        <div>
+                            <h2 class="text-2xl font-bold text-stone-800 flex items-center gap-2" x-text="selectedChild.name"></h2>
+                            <div class="text-sm text-stone-500 flex gap-3">
+                                <span>Budget: $625</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-bold text-stone-500 uppercase tracking-wide">Spent</div>
+                        <div class="text-2xl font-mono font-medium text-stone-800">$245.33</div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
 </div>
