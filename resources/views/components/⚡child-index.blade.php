@@ -7,12 +7,19 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 
 new class extends Component {
+    public ?int $selectedChildId = null;
+
     #[Computed]
     #[On('child-added')]
     #[On('child-deleted')]
     public function children(): Collection
     {
         return Child::query()->orderBy('name')->get();
+    }
+
+    public function selectChild(int $childId): void
+    {
+        $this->selectedChildId = $childId;
     }
 
     public function delete(int $id): void
@@ -30,7 +37,8 @@ new class extends Component {
     <livewire:add-user-form-modal/>
     @foreach ($this->children as $child)
         <div
-            @click="show = true; selectedChild = {{ Js::from($child) }}"
+            :key="$child->id"
+            @click="show = true; selectedChild = {{ Js::from($child) }}; $wire.selectChild({{ $child->id }})"
             class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden border border-stone-200 group relative">
             <div class="p-6">
                 <div class="flex justify-between items-start mb-4">
@@ -78,22 +86,61 @@ new class extends Component {
 
     <div x-show="show" x-cloak class="fixed inset-0 z-40 bg-stone-100 overflow-y-auto animate-fade-in m-3 rounded-xl shadow-xl">
         <template x-if="selectedChild">
-            <div class="bg-white border-b border-stone-200 sticky top-0 z-50">
-                <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <button @click="show = ! show" class="p-2 -ml-2 rounded-full text-stone-500 hover:bg-stone-100 transition-colors hover:cursor-pointer">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                        <div>
-                            <h2 class="text-2xl font-bold text-stone-800 flex items-center gap-2" x-text="selectedChild.name"></h2>
-                            <div class="text-sm text-stone-500 flex gap-3">
-                                <span>Budget: $625</span>
+            <div>
+                <div class="bg-white border-b border-stone-200 sticky top-0 z-50">
+                    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <button @click="show = ! show" class="p-2 -ml-2 rounded-full text-stone-500 hover:bg-stone-100 transition-colors hover:cursor-pointer">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                            <div>
+                                <h2 class="text-2xl font-bold text-stone-800 flex items-center gap-2" x-text="selectedChild.name"></h2>
+                                <div class="text-sm text-stone-500 flex gap-3">
+                                    <span>Budget: $625</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-bold text-stone-500 uppercase tracking-wide">Spent</div>
+                            <div class="text-2xl font-mono font-medium text-stone-800">
+                                <div class="flex items-center">
+                                    $<livewire:child-total-spent-value :child-id="$selectedChildId" :key="'item-form-'.$selectedChildId" />
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <div class="text-sm font-bold text-stone-500 uppercase tracking-wide">Spent</div>
-                        <div class="text-2xl font-mono font-medium text-stone-800">$245.33</div>
+                </div>
+                <div class="max-w-5xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200">
+                            <livewire:add-item-form :child-id="$selectedChildId" :key="'item-form-'.$selectedChildId" />
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 sticky top-28">
+                            <h3 class="font-bold text-stone-800 mb-6 font-serif text-lg border-b border-stone-100 pb-2">Status</h3>
+                            <div class="space-y-6">
+                                <div><div class="flex justify-between text-sm mb-2"><span class="text-stone-500">Progress</span><span class="font-medium text-stone-800">41%</span></div><div class="w-full bg-stone-200 rounded-full h-2 overflow-hidden"><div class="h-full transition-all duration-500 ease-out rounded-full bg-stone-600" style="width: 41.176%;"></div></div></div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-stone-50 p-4 rounded-lg text-center border border-stone-100">
+                                        <span class="block text-xs font-bold text-stone-400 uppercase">Spent</span>
+                                        <span class="block text-xl font-medium text-stone-800 mt-1">
+                                            <div class="flex items-center">
+                                                $<livewire:child-total-spent-value :child-id="$selectedChildId" :key="'item-form-'.$selectedChildId" />
+                                            </div>
+                                        </span>
+                                    </div>
+                                    <div class="bg-stone-50 p-4 rounded-lg text-center border border-stone-100">
+                                        <span class="block text-xs font-bold text-stone-400 uppercase">Remaining</span>
+                                        <span class="block text-xl font-medium mt-1 text-emerald-600">
+                                            <div class="flex items-center">
+                                                $<livewire:child-total-remaining-value :child-id="$selectedChildId" :key="'item-form-'.$selectedChildId" />
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

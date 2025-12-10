@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Casts\FloatAsIntegerCast;
 use Carbon\CarbonInterface;
 use Database\Factories\ItemFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read int $id
@@ -22,6 +24,8 @@ final class Item extends Model
     /** @use HasFactory<ItemFactory> */
     use HasFactory;
 
+    protected $fillable = ['child_id', 'name', 'cost'];
+
     /**
      * @return array<string, string>
      */
@@ -31,9 +35,14 @@ final class Item extends Model
             'id' => 'integer',
             'child_id' => 'integer',
             'name' => 'string',
-            'cost' => 'integer',
+            'cost' => FloatAsIntegerCast::class,
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
+    }
+
+    public function child(): BelongsTo
+    {
+        return $this->belongsTo(Child::class);
     }
 }
